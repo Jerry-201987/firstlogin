@@ -69,20 +69,40 @@ input {
   margin-right: 10px;
   margin-bottom: 5px;
 }
-.msg {
-  display: none;
-  width: 400px;
-  padding: 20px 25px;
-  font-size: 20px;
-  border-radius: 20px;
-  color: #04a7ff;
+.msgSuccess {
+  min-width: 300px;
+  box-sizing: border-box;
+  border: 1px solid #fde2e2;
   position: fixed;
-  top: 18%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 999;
+  top: 5%; 
+  transform: translateX(-50%);
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  display: none;
+  color: #52aa3a;
+  padding: 12px 15px;
+  background: #fef0f0;
+  text-align: center;
 }
-
+.msg {
+  min-width: 300px;
+  box-sizing: border-box;
+  border: 1px solid #fde2e2;
+  position: fixed;
+  left: 50%;
+  top: 5%; 
+  transform: translateX(-50%);
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  display: none;
+  color: #ff5046;
+  padding: 12px 15px;
+  background: #fef0f0;
+  text-align: center;
+}
 th {
   font-weight: 700;
   color: #909399;
@@ -132,7 +152,3 @@ input::placeholder {
   position: absolute;
   display: none;
 }
-/* .errMsg {
-        color: red;
-        position: absolute;
-      } */

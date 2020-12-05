@@ -2,7 +2,7 @@
 var regPwd = /^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~ ]+$)(?![a-z0-9]+$)(?![a-z\W_!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~ ]+$)(?![0-9\W_!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~ ]+$)[a-zA-Z0-9\W_!"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~ ]{10,32}$/
 var regMoreTwo = /.*(.)\1{2}.*/
 var str = ''
-var localUrl = 'https://10.130.41.73:8447/portal'
+var localUrl = '/'
 
 //查询
 function getListInfo() {
@@ -10,32 +10,21 @@ function getListInfo() {
     type: "GET",
     url: localUrl + "/firstlogin/users",
     success: function (res) {
-      console.log(res);
-      for (let i = 0; i < res.datas.length; i++) {
-        str += '<tr><td class="is-leaf"><div class="cell"><input type="text" userid="' + res.datas[i].userId + '" readonly class="uname" value="' + res.datas[i].username + '"/></div></td>' +
-        '<td class="is-leaf"><div class="cell"><input type="password" placeholder="密码" autocomplete="off" class="pwd_txt" /><div class="errMsg">123</div></div></td>' +
-        '<td class="is-leaf"><div class="cell"><input type="password" placeholder="确认密码" autocomplete="off" class="surePwd_txt" /><div class="errSureMsg"></div></div></td></tr>' 
+      if (res.resultCode === 'PUB-000000') {
+        for (let i = 0; i < res.datas.length; i++) {
+          str += '<tr><td class="is-leaf"><div class="cell"><input type="text" userid="' + res.datas[i].userId + '" readonly class="uname" value="' + res.datas[i].username + '"/></div></td>' +
+          '<td class="is-leaf"><div class="cell"><input type="password" placeholder="密码" autocomplete="off" class="pwd_txt" /><div class="errMsg">123</div></div></td>' +
+          '<td class="is-leaf"><div class="cell"><input type="password" placeholder="确认密码" autocomplete="off" class="surePwd_txt" /><div class="errSureMsg"></div></div></td></tr>' 
+        }
+        $("#subject").append(str);      
+      } else if (res.resultCode === 'FIRST-400000') {
+        $('.msg').text('不再是初次登录状态').show(300).delay(3000).hide(300)
+      } else {
+        $('.msg').text('初始化失败').show(300).delay(3000).hide(300)
       }
-      console.log(str)
-      $("#subject").append(str);
     },
     error: function (res) {
-      // let list = {
-      //   "datas": [
-      //     { "userId": "1", "username": "sysadmin" },
-      //     { "userId": "2", "username": "secadmin" },
-      //     { "userId": "3", "username": "secauditor" },
-      //   ],
-      //   "resultCode": "PUB-000000",
-      //   "resultInfo": "success"
-      // }
-      // for (let i = 0; i < list.datas.length; i++) {
-      //   str += '<tr><td class="is-leaf"><div class="cell"><input type="text" userid="' + list.datas[i].userId + '" readonly class="uname" value="' + list.datas[i].username + '"/></div></td>' +
-      //   '<td class="is-leaf"><div class="cell"><input type="password" placeholder="密码" autocomplete="off" class="pwd_txt" /><div class="errMsg">123</div></div></td>' +
-      //   '<td class="is-leaf"><div class="cell"><input type="password" placeholder="确认密码" autocomplete="off" class="surePwd_txt" /><div class="errSureMsg"></div></div></td></tr>' 
-      // }
-      // console.log(str)
-      // $("#subject").append(str);
+      $('.msg').text('初始化失败').show(300).delay(3000).hide(300)
     },
   });
 }
@@ -49,10 +38,8 @@ function ajaxSure(password, userId) {
     })
   });
   $('.pwd_txt').each(function(index,element){
-    // console.log(element)
     arr[index].password = $(element).val()
   });
-   console.log(arr)
   $.ajax({
     type: "PUT",
     contentType: "application/json;charset=UTF-8",
@@ -60,10 +47,12 @@ function ajaxSure(password, userId) {
     data: JSON.stringify({userpasswords: arr}),
     success: function (res) {
       if (res.resultCode === 'PUB-000000') {
-        $('.msg').text('初始化成功').show(300).delay(3000).hide(300)
+        $('.msgSuccess').text('初始化成功').show(300).delay(3000).hide(300)
         window.location.href = localUrl
       } else if (res.resultCode === 'FIRST-400000') {
-        $('.msg').text('不再是firstlogin状态').show(300).delay(3000).hide(300)
+        $('.msg').text('不再是初次登录状态').show(300).delay(3000).hide(300)
+      } else {
+        $('.msg').text('初始化失败').show(300).delay(3000).hide(300)
       }
     },
     error: function (res) {
@@ -88,7 +77,7 @@ $(function () {
     var surePwd = $(".surePwd_txt").val();
   //密码为空 密码不符合要求
   if (!pwd) {
-    $('.msg').text('请输入密码').show(300).delay(3000).hide(300)
+    $('.msg').text('初始化失败').show(300).delay(3000).hide(300)
     return false
   } else if (!(regPwd.test(pwd))) {
     $('.msg').text('密码不满足要求!').show(300).delay(3000).hide(300)
